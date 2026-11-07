@@ -44,7 +44,8 @@ class StudentController extends Controller
 
     student::create($validated);
 
-    return redirect('/student');
+    return to_route('student.index')->withSuccess('Data berhasil ditambahkan');
+
 }
     /**
      * Display the specified resource.
@@ -57,24 +58,41 @@ class StudentController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(student $student)
     {
-        //
+        return view('student.edit', [
+            'title' => 'Edit Student',
+            'student' => $student,
+            ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, student $student)
     {
-        //
+        $validated = $request->validate([
+        'name' => 'required',
+        'nim'  => 'required|numeric|digits:12',
+    ], [
+        'name.required' => 'Nama wajib di input',
+        'nim.required'  => 'Nim wajib di input',
+        'nim.numeric'   => 'Nim wajib berupa angka',
+        'nim.digits'    => 'Nim wajib 12 digit',
+    ]);
+
+    $student->update($validated);
+
+    return to_route('student.index')->withSuccess('Data berhasil diubah');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(student $student)
     {
-        //
+        $student->delete();
+
+    return to_route('student.index')->withSuccess('Data berhasil dihapus');
     }
 }
